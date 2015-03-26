@@ -1,5 +1,5 @@
 Create, use, and remove temporary files securely
-=====================
+================================================
 
 Often we want to create temporary files to save data that we can't hold
 in memory or to pass to external programs that must read from a file.
@@ -29,6 +29,7 @@ files should always be created on the local filesystem. Many
 remote filesystems (for example, NFSv2) do not support the open
 flags needed to safely create tempoary files.
 
+
 ### Python
 
 Use | Avoid
@@ -40,14 +41,15 @@ tempfile.mkstemp              |
 tempfile.mkdtemp              |
 
 tempfile.TemporaryFile should be used whenever possible. Besides
-creating temporary files safely it also hides the file and cleans up
-the file automatically.
+creating temporary files safely it also hides the file and cleans up the
+file automatically.
+
 
 ### Incorrect
 
-Creating temporary files with predictable paths leaves them open to time of
-check, time of use attacks (TOCTOU). Given the following code snippet an
-attacker might pre-emptively place a file at the specified location.
+Creating temporary files with predictable paths leaves them open to time
+of check, time of use attacks (TOCTOU). Given the following code snippet
+an attacker might pre-emptively place a file at the specified location.
 
 ```python
 import os
@@ -61,10 +63,8 @@ if not os.path.exists(tmp):
 
 ```
 
-
 There is also an insecure method within the Python standard library that
 cannot be used in a secure way to create temporary file creation.
-
 
 ```python
 import os
@@ -82,11 +82,12 @@ filename = "{}/{}.tmp".format(tempfile.gettempdir(), os.getpid())
 open(filename, "w")
 ```
 
+
 ### Correct
 
 The Python standard library provides a number of secure ways to create
-temporary files and directories. The following are examples of how you can
-use them.
+temporary files and directories. The following are examples of how you
+can use them.
 
 Creating files:
 
@@ -107,7 +108,6 @@ try:
     tmp.write('stuff')
 finally:
     tmp.close()  # deletes the file
-
 
 # Handle opening the file yourself. This makes clean-up
 # more complex as you must watch out for exceptions
@@ -149,13 +149,16 @@ finally:
     os.rmdir(tmpdir)
 ```
 
-## Consequences
+
+### Consequences
 
 * The program can be tricked into performing file actions against the
 wrong file or using a malicious file instead of the expected temporary
 file
 
-## References
+
+### References
+
 * [Temporary File - CERT Secure Coding Standards](https://www.securecoding.cert.org/confluence/download/attachments/3524/07.5+Temporary+Files+v2.pdf)
 * [FIO21-C. Do not create temporary files in shared directories](https://www.securecoding.cert.org/confluence/display/seccode/FIO21-C.+Do+not+create+temporary+files+in+shared+directories)
 * [FIO03-J. Remove temporary files before termination](https://www.securecoding.cert.org/confluence/display/java/FIO03-J.+Remove+temporary+files+before+termination)
