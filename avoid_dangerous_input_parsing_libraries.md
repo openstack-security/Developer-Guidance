@@ -1,5 +1,5 @@
-Avoid dangerous file parsing and object serialization libraries (YAML, pickle)
-==============================================================================
+Avoid dangerous file parsing and object serialization libraries
+===============================================================
 
 Many common libraries that are often used for reading configuration
 files and deserializing objects are very dangerous because they can
@@ -9,20 +9,22 @@ allow code to be embedded inside the input.
 
 Often the input to these libraries is untrusted or only partially
 trusted. These unsafe inputs can come from configuration files or be
-provided via REST APIs. For example, we often use YAML for configuration files but YAML files can also
-contain embedded Python code. This may provide an attacker with a method to execute code.
+provided via REST APIs. For example, we often use YAML for configuration
+files but YAML files can also contain embedded Python code. This may
+provide an attacker with a method to execute code.
 
-Many, but not all, of these libraries, offer safe interfaces that disable
-features that enable code execution. You always want to use the safe functions
-to load input. Often the obvious function to use is not the safe
-one and we should check the  documentation for libraries not covered
-here.
+Many, but not all, of these libraries, offer safe interfaces that
+disable features that enable code execution. You always want to use the
+safe functions to load input. Often the obvious function to use is not
+the safe one and we should check the  documentation for libraries not
+covered here.
+
 
 ### Python Libraries
 
-We often use YAML, pickle, or eval to load data into our Python programs,
-but this is dangerous. PyYAML has a safe way to load code, but pickle and
-eval do not.
+We often use YAML, pickle, or eval to load data into our Python
+programs, but this is dangerous. PyYAML has a safe way to load code, but
+pickle and eval do not.
 
 | Module   | Problem   |  Use  | Avoid
 | -------- | --------- | ----- | ---------
@@ -30,10 +32,12 @@ eval do not.
 | pickle | Allows creating arbitrary Python objects. | Do not use | pickle.load, pickle.loads
 | eval | Runs all input as Python code | Do not use | eval
 
+
 ## Python Example
+
 ### Incorrect
 
-yaml.load is the obvious function to use but is dangerous:
+yaml.load is the obvious function to use but it is dangerous:
 ```python
 import yaml
 import pickle
@@ -55,6 +59,7 @@ pickle.load(s) # can execute code in myfile
 eval(s) # executes myfile contents as python code
 ```
 
+
 ### Correct
 
 Here we use PyYAMLs safe YAML loading function:
@@ -66,12 +71,16 @@ conf_str = '''
 '''
 conf = yaml.safe_load(conf_str)
 ```
+
 There is no safe alternative for pickle.load.
+
 
 ## Consequences
 
 * Anyone that can control the input passed to dangerous libraries can
-gain arbitrary code execution on the system running the dangerous library.
+gain arbitrary code execution on the system running the dangerous
+library.
+
 
 ## References
 
