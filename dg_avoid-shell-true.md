@@ -1,5 +1,4 @@
-
-Python pipes to avoid shells
+Python Pipes to Avoid Shells
 ============================
 
 You should take a look at the
@@ -7,13 +6,15 @@ You should take a look at the
 
 A lot of the time, our codebase uses `shell=True` because it's
 convenient. The shell provides the ability to pipe things around
-without buffering them in memory, and makes it easy to chain commands.
+without buffering them in memory, and allows a malicious user to chain
+additional commands after a legitimate command is run.
+
+
+### Incorrect
 
 Here is a simple function that uses curl to grab a page from a website,
 and pipe it directly to the `wordcount` program to tell us how many
 lines there are in the HTML source code.
-
-### Incorrect
 
 ```python
 def count_lines(website):
@@ -24,16 +25,15 @@ def count_lines(website):
 
 ```
 
-(that output is correct, by the way - the google html source does have
-7 lines)
+(That output is correct, by the way - the google html source does have
+7 lines.)
 
 The function is insecure because it uses `shell=True`, which allows
 [shell injection[(/shell_injection.md). A user to who instructs your
-code to fetch the website `; rm -rf /` can do terrible things to your
-machine.
+code to fetch the website `; rm -rf /` can do terrible things to what
+used to be your machine.
 
-If we naively convert the function to use `shell=False`, it doesn't
-work.
+If we convert the function to use `shell=False`, it doesn't work.
 
 ```python
 def count_lines(website):
@@ -51,12 +51,11 @@ subprocess.CalledProcessError: Command
 ```
 
 The pipe doesn't mean anything special when shell=False, and so curl
-tries to download the website called '|'.
+tries to download the website called '|'. This does not fix the issue,
+rather it causes it to be more broken than before.
 
-Fixed? No. More broken than before.
+If we can't rely on pipes if we have shell=False, how should we do this?
 
-Ok, so we can't rely on pipes if we have shell=False, so how should we
-do this?
 
 ### Correct
 
@@ -77,26 +76,28 @@ def count_lines(website):
 ```
 
 Rather than calling a single shell process that runs each of our
-programs, we run them separately ourselves and connect stdout from curl
-to stdin for wc. We specify `stdout=subprocess.PIPE`, which tells
-subprocess to send that output to the respective file handler.
+programs, we run them separately and connect stdout from curl to stdin
+for wc. We specify `stdout=subprocess.PIPE`, which tells subprocess to
+send that output to the respective file handler.
 
-Treat pipes like file descriptors (you can actually use FDs if you
-want) - they may block on reading and writing if nothing is connected
-to the other end. That's why we use `communicate()`, which reads until
-EOF on the output and then waits for the process to terminate. You
-should generally avoid reading and writing to pipes directly unless
-you really know what you're doing - it's easy to work yourself into a
-situation that can deadlock.
+Treat pipes like file descriptors (you can actually use FDs if you want)
+- they may block on reading and writing if nothing is connected to the
+other end. That's why we use `communicate()`, which reads until EOF on
+the output and then waits for the process to terminate. You should
+generally avoid reading and writing to pipes directly unless you really
+know what you're doing - it's easy to work yourself into a situation
+that can deadlock.
 
-Note that `communicate()` buffers the result in memory - if that's
-not what you want, use a file descriptor for `stdout` to pipe that
-output into a file.
+Note that `communicate()` buffers the result in memory - if that's not
+what you want, use a file descriptor for `stdout` to pipe that output
+into a file.
+
 
 ## Consequences
-
+  
 * Using pipes helps you avoid shell injection in more complex situations
 * It's possible to deadlock things with pipes (in Python or in shell)
+
 
 ## References
 
