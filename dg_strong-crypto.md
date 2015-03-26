@@ -1,11 +1,12 @@
 Use Strong and Established Cryptographic Elements
 =================================================
 
-Cryptography is a complex topic, frequently miss-understood, and it is
+Cryptography is a complex topic that is frequently misunderstood and is
 the area of significant debate. The specifics mentioned in this guide
 are likely to change as state of the art continues to advance.
 
 In general, you should follow some simple rules for using cryptography:
+
 * Do not invent your own cryptography, use existing algorithms and
 implementations.
 * When utilizing cryptographic hashing, signing, or encryption, strong
@@ -26,13 +27,17 @@ processed or stored at either end of that link. When deploying
 cryptography, the impact to system performance and availability must
 also be considered.
 
-The Python cryptography libraries currently in OpenStack global requirements include [PyCrypto](https://www.dlitz.net/software/pycrypto/), [pyOpenSSL](https://github.com/pyca/pyopenssl), [cryptography](https://cryptography.io/), and [passlib](https://pythonhosted.org/passlib/).
+The Python cryptography libraries currently in OpenStack global
+requirements include [PyCrypto](https://www.dlitz.net/software/pycrypto/),
+[pyOpenSSL](https://github.com/pyca/pyopenssl),
+[cryptography](https://cryptography.io/), and
+[passlib](https://pythonhosted.org/passlib/).
 
 Use of the following cryptographic elements is encouraged:
+
 * SHA-256 is the preferred hashing algorithm.
 * AES is the preferred general encryption algorithm, with 128, 192 or
 256 bit key lengths.
-* *TBD - alg. for password encryption?*
 * HMAC is the preferred signing construction, in conjunction with a
 preferred hashing algorithm.
 * TLSv1.2 or TLSv1.1 are preferred for protecting data in transit
@@ -41,19 +46,20 @@ certificate validity, expiry and revocation status must be checked.
 
 While for some use cases it may seem appropriate to use a weaker
 cryptographic element, the options listed above are generally advised.
+
 Usage of the following is strongly discouraged:
 * MD5
 * DES
 * RC4
 * SSLv2, SSLv3, TLSv1.0
 
-## Consequences
 
-* Weak cryptographic elements may be vulnerable to various types of
+### Consequences
+Weak cryptographic elements may be vulnerable to various types of
 attack, ultimately affecting confidentiality and integrity of the
 associated system or dataset at risk.
 
-## References
+### References
 
 * [OWASP Guide to Cryptography](https://www.owasp.org/index.php/Guide_to_Cryptography)
 * [NSA Suite B Cryptography](https://www.nsa.gov/ia/programs/suiteb_cryptography/index.shtml)
