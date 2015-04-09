@@ -1,16 +1,19 @@
 Subprocess Shell Injection
 ==========================
 
+
 Many common tasks involve interacting with the operating system - we
-write a lot of code that configures, modifies, or otherwise controls
-the system, and there are a number of pitfalls that can come along with
+write a lot of code that configures, modifies, or otherwise controls the
+system, and there are a number of pitfalls that can come along with
 that.
 
-Shelling out to another program is a pretty common thing to want to
-do. In most cases, you will want to pass parameters to this other
-program. Here is a simple function for pinging another server.
+Shelling out to another program is a pretty common thing to want to do.
+In most cases, you will want to pass parameters to this other program.
+Here is a simple function for pinging another server.
+
 
 ### Incorrect
+
 ```python
 def ping(myserver):
     return subprocess.check_output('ping -c 1 %s' % myserver, shell=True)
@@ -41,8 +44,11 @@ rm: cannot remove `/bin/cgroups-umount': Permission denied
 If you choose to test this, we recommend that you pick a command that
 is less destructive than 'rm -rf /', such as 'touch helloworld.txt'.
 
+
 ### Correct
+
 This function can be re-written safely:
+
 ```python
 def ping(myserver):
     args = ['ping', '-c', '1', myserver]
@@ -50,8 +56,8 @@ def ping(myserver):
 ```
 
 Rather than passing a string to subprocess, our function passes a list
-of strings. The ping program gets each argument separately (even if
-the argument has a space in it), so the shell does not process other
+of strings. The ping program gets each argument separately (even if the
+argument has a space in it), so the shell does not process other
 commands that are provided by the user after the ping command
 terminates. You do not have to explicitly set shell=False - it is the
 default.
@@ -68,10 +74,11 @@ ping: unknown host 8.8.8.8; rm -rf /
 This program is now much safer, even if it has to allow user-provided
 input.
 
-## Consequences
+
+### Consequences
 
 * If you use shell=True, your code is extremely likely to be vulnerable
 * Even if *your* code is not vulnerable, the next person who maintains
-  can easily introduce a vulnerability.
+can easily introduce a vulnerability.
 * Shell injections are arbitrary code execution - a competent attacker
-  will use these to compromise the rest of your system.
+will use these to compromise the rest of your system.

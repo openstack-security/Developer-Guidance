@@ -1,4 +1,3 @@
-
 Unvalidated URL redirect
 ========================
 
@@ -25,12 +24,12 @@ To counter this type of attack all URLs must be validated before being
 used to redirect the user. This should ensure the redirect will take
 the user to a page within your site.
 
+
 ### Incorrect
 
 This example just processes the 'next' argument with no validation:
 
 ```python
-
 import os
 from flask import Flask,redirect, request
 
@@ -39,8 +38,8 @@ app = Flask(__name__)
 @app.route('/')
 def example_redirect():
     return redirect(request.args.get('next'))
-
 ```
+
 
 ### Correct
 
@@ -49,7 +48,6 @@ that the URL the user is being redirected to originates from the same
 host as the host serving the content.  
 
 ```python
-
 from flask import request, g, redirect
 from urlparse import urlparse, urljoin
 
@@ -74,20 +72,21 @@ def get_safe_redirect():
 
 ```
 
-The Django framework contains a [django.utils.http.is_safe_url](https://github.com/django/django/blob/93b3ef9b2e191101c1a49b332d042864df74a658/django/utils/http.py#L268)
+The Django framework contains a
+[django.utils.http.is_safe_url](https://github.com/django/django/blob/93b3ef9b2e191101c1a49b332d042864df74a658/django/utils/http.py#L268)
 function that can be used to validate redirects without implementing a
 custom version.
 
 
 
-## Consequences
+### Consequences
 
 * Unvalidated redirects can make your site a target for phishing attacks that can
 lead to users credentials being stolen.
 * [OSSA-2012-012](http://security.openstack.org/ossa/OSSA-2012-012.html)
 
 
-## References
+### References
 
 * [CWE-601: URL Redirection to Untrusted Site](http://cwe.mitre.org/data/definitions/601.html)
 * [OWASP Top 10 2013 - Unvalidated redirects and forwards ](https://www.owasp.org/index.php/Top_10_2013-A10-Unvalidated_Redirects_and_Forwards)
